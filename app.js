@@ -17,16 +17,6 @@ app.get("/", (req, res) => {
     res.status(200).json({ mensagem: "API do GameHub funcionando" });
     });
 
-// // #region estudios
-
-// app.get("/estudios/:id", validarId, 
-
-// app.post("/estudios", 
-
-// app.put("/estudios/:id", validarId,
-
-// app.delete("/estudios/:id", validarId,
-
 // #endregion estudios
 
 // #region jogadores
