@@ -4,12 +4,14 @@ import cors from "cors";
 import conexao from "./db.js";
 import { validarId, textoValido, inteiroPositivo, tratarErro } from "./src/utils/validacoes.js";
 import estudioRoute from "./src/routes/estudioRoute.js";
+import jogoRoute from "./src/routes/jogoRoute.js";
 
 const app = express();
 const PORTA = Number(process.env.PORTA || 3000);
 app.use(cors());
 app.use(express.json());
 app.use("/estudios", estudioRoute);
+app.use("/jogos", jogoRoute);
 
 app.get("/", (req, res) => {
     res.status(200).json({ mensagem: "API do GameHub funcionando" });
@@ -26,78 +28,7 @@ app.get("/", (req, res) => {
 // app.delete("/estudios/:id", validarId,
 
 // #endregion estudios
-// #region jogos
 
-app.get("/jogos", (req, res, next) => {
-    conexao.query("SELECT * FROM jogos ORDER BY id", (erro, resultado) => {
-        if (erro) return next(erro);
-        return res.status(200).json(resultado);
-    });
-});
-
-app.get("/jogos/:id", validarId, (req, res, next) => {
-    conexao.query("SELECT * FROM jogos WHERE id = ?", [req.id], (erro, resultado) => {
-        if (erro) return next(erro);
-        if (resultado.length === 0) {
-            return res.status(404).json({ erro: "Jogo não encontrado" });
-        }
-        return res.status(200).json(resultado[0]);
-    });
-});
-
-app.post("/jogos", (req, res, next) => {
-    const { titulo, ano_lancamento, estudio_id } = req.body ?? {};
-    if (!textoValido(titulo, 150) || !inteiroPositivo(ano_lancamento)
-        || ano_lancamento > 9999 || !inteiroPositivo(estudio_id)) {
-        return res.status(400).json({
-            erro: "Informe titulo (até 150 caracteres), ano_lancamento de 1 a 9999 e estudio_id inteiro positivo"
-        });
-    }
-    const dados = { titulo: titulo.trim(), ano_lancamento, estudio_id };
-
-    conexao.query("INSERT INTO jogos (titulo, ano_lancamento, estudio_id) VALUES (?, ?, ?)", [dados.titulo, dados.ano_lancamento, dados.estudio_id], (erro, resultado) => {
-        if (erro) return next(erro);
-        return res.status(201).json({
-            mensagem: "Jogo cadastrado com sucesso",
-            id: resultado.insertId
-        });
-    });
-});
-
-app.put("/jogos/:id", validarId, (req, res, next) => {
-    const { titulo, ano_lancamento, estudio_id } = req.body ?? {};
-    if (!textoValido(titulo, 150) || !inteiroPositivo(ano_lancamento)
-        || ano_lancamento > 9999 || !inteiroPositivo(estudio_id)) {
-        return res.status(400).json({
-            erro: "Informe titulo (até 150 caracteres), ano_lancamento de 1 a 9999 e estudio_id inteiro positivo"
-        });
-    }
-    const dados = { titulo: titulo.trim(), ano_lancamento, estudio_id };
-
-    // Consulta didática para confirmar que o registro existe antes de editar.
-    conexao.query("SELECT * FROM jogos WHERE id = ?", [req.id], (erro, registros) => {
-        if (erro) return next(erro);
-        if (registros.length === 0) {
-            return res.status(404).json({ erro: "Jogo não encontrado" });
-        }
-        conexao.query("UPDATE jogos SET titulo = ?, ano_lancamento = ?, estudio_id = ? WHERE id = ?", [dados.titulo, dados.ano_lancamento, dados.estudio_id, req.id], (erro, resultado) => {
-            if (erro) return next(erro);
-            return res.status(200).json({ mensagem: "Jogo atualizado com sucesso" });
-        });
-    });
-});
-
-app.delete("/jogos/:id", validarId, (req, res, next) => {
-    conexao.query("DELETE FROM jogos WHERE id = ?", [req.id], (erro, resultado) => {
-        if (erro) return next(erro);
-        if (resultado.affectedRows === 0) {
-            return res.status(404).json({ erro: "Jogo não encontrado" });
-        }
-        return res.status(200).json({ mensagem: "Jogo excluído com sucesso" });
-    });
-});
-
-// #endregion jogos
 // #region jogadores
 
 app.get("/jogadores", (req, res, next) => {
