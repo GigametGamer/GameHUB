@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";              
 import cors from "cors";
 import conexao from "./db.js";
-import { validarId, textoValido, inteiroPositivo, tratarErro } from "./src/utils/validacoes.js";
+import { tratarErro } from "./src/utils/validacoes.js";
 import estudioRoute from "./src/routes/estudioRoute.js";
 import jogoRoute from "./src/routes/jogoRoute.js";
 import jogadorRoute from "./src/routes/jogadorRoute.js";
@@ -20,8 +20,6 @@ app.get("/", (req, res) => {
     });
 
 // #endregion estudios
-
-
 
 app.use((req, res) => {
     res.status(404).json({ erro: "Rota não encontrada" });
