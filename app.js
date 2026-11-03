@@ -2,19 +2,19 @@ import "dotenv/config";
 import express from "express";              
 import cors from "cors";
 import conexao from "./db.js";
-import { validarId, textoValido, inteiroPositivo, tratarErro } from "./validacoes.js";
-import * as estudioController from "./controllers/estudioController.js";
+import { validarId, textoValido, inteiroPositivo, tratarErro } from "./src/utils/validacoes.js";
+import estudioRoute from "./src/routes/estudioRoute.js";
 
 const app = express();
 const PORTA = Number(process.env.PORTA || 3000);
 app.use(cors());
 app.use(express.json());
+app.use("/estudios", estudioRoute);
 
 app.get("/", (req, res) => {
     res.status(200).json({ mensagem: "API do GameHub funcionando" });
     });
 
-// app.use("/estudios", estudioRoute);
 // // #region estudios
 
 // app.get("/estudios/:id", validarId, 
