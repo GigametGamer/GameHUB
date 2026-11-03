@@ -1,5 +1,10 @@
-require("dotenv").config();
-const mysql = require("mysql2");
+// require("dotenv").config();
+// const mysql = require("mysql2");
+
+import dotenv from "dotenv";
+import mysql from "mysql2";
+
+dotenv.config();
 
 const conexao = mysql.createConnection({
     host: process.env.DB_HOST || "localhost",
@@ -9,4 +14,4 @@ const conexao = mysql.createConnection({
     password: process.env.DB_PASSWORD || "1234"
 });
 
-module.exports = conexao;
+export default conexao;
